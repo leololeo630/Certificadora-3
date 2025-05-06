@@ -1,0 +1,17 @@
+To anotando umas parada aqui pra organizar meus manos
+apenas ignore e vá fazer seu backend
+
+tamo junto
+
+App.jsx → Aplicação principal
+
+main.jsx → ponto de entrada do React
+
+src/
+├── assets/               # Imagens, logos, ícones
+├── components/           # Componentes reutilizáveis (Header, Input, Button)
+├── pages/                # Cada tela (LoginPage, RegisterPage, etc)
+├── services/             # Conexão com o backend (API)
+├── App.jsx               # Definição de rotas
+├── main.jsx              # Entrada principal
+└── styles/               # CSS global
