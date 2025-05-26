@@ -125,6 +125,41 @@ app.post('/api/usuarios/cadastrar', (req, res) => {
     });
 });
 
+app.post('/api/usuarios/login', (req, res) => {
+    const { email, senha } = req.body;
+
+    // Validação básica
+    if (!email || !senha) {
+        return res.status(400).json({
+            error: 'Email e senha são obrigatórios.',
+        });
+    }
+    // Buscar usuário no banco
+    const sql = 'SELECT id, nome, email, tipo_usuario FROM Usuarios WHERE email = ? AND senha = ?';
+    db.get(sql, [email.trim().toLowerCase(), senha], (err, row) => {
+        if (err) {
+            console.error('Erro ao fazer login:', err.message);
+            return res.status(500).json({ 
+                error: 'Erro interno do servidor.' 
+            });
+        }
+
+        if (!row) {
+            return res.status(401).json({ 
+                error: 'Email ou senha incorretos.' 
+            });
+        }
+
+        res.status(200).json({
+            id: row.id,
+            nome: row.nome,
+            email: row.email,
+            tipo_usuario: row.tipo_usuario,
+            message: 'Login realizado com sucesso!'
+        });
+    });
+});
+
 // Iniciar o servidor
 app.listen(PORT, () => {
     console.log(`Servidor backend rodando em http://localhost:${PORT}`);
