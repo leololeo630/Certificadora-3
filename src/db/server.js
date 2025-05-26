@@ -70,6 +70,61 @@ function criarTabelas() {
 // --- ROTAS DA API EXPRESS ---
 // Colocar os métodos aqui
 
+app.post('/api/usuarios/cadastrar', (req, res) => {
+    const { email, senha } = req.body;
+
+    // Validação básica
+    if (!email || !senha) {
+        return res.status(400).json({
+            error: 'Email e senha são obrigatórios.',
+        });
+    }
+
+    // Validação de email básica
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({
+            error: 'Email inválido.'
+        });
+    }
+
+    // Validação de senha mínima
+    if (senha.length < 6) {
+        return res.status(400).json({
+            error: 'A senha deve ter pelo menos 6 caracteres.'
+        });
+    }
+
+    // Extrair nome do email (parte antes do @) e definir tipo padrão
+    const nome = email.split('@')[0];
+    const tipo_usuario = 'usuario'; // Tipo padrão
+
+    // Inserir usuário no banco
+    const sql = 'INSERT INTO Usuarios (nome, email, senha, tipo_usuario) VALUES (?, ?, ?, ?)';
+    db.run(sql, [nome, email, senha, tipo_usuario], function (err) {
+        if (err) {
+            console.error('Erro ao cadastrar usuário:', err.message);
+            if (err.message.includes('UNIQUE constraint failed: Usuarios.email')) {
+                return res.status(409).json({ 
+                    error: 'Este email já está cadastrado.' 
+                });
+            }
+            return res.status(500).json({ 
+                error: 'Erro interno do servidor.' 
+            });
+        }
+        
+        // Retornar sucesso
+        res.status(201).json({ 
+            id: this.lastID, 
+            nome, 
+            email, 
+            tipo_usuario,
+            message: 'Usuário cadastrado com sucesso!' 
+        });
+    });
+});
+
 // Iniciar o servidor
 app.listen(PORT, () => {
     console.log(`Servidor backend rodando em http://localhost:${PORT}`);
