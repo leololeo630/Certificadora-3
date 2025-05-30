@@ -48,5 +48,21 @@ export const apiService = {
       throw error;
     }
   },
+  submitProposal: async(proposta) => {
+    try{
+      const response = await fetch(`${API_BASE_URL}/proposal/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ proposta }),
+      });
+      const data = await response.json();
+      return data;
+    }catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
 
 };

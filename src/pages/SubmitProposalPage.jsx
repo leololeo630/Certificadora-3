@@ -3,15 +3,26 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
 import './Global.css'; // Importando o CSS global
+import { useAuth } from '../context/AuthContext';
+import { apiService } from '../services/api';
 
 function SubmitProposalPage() {
-    const [proposta, setProposta] = useState('');
+    const [proposta, setProposta] = useState({
+        id_usuario: null,
+        titulo: '',
+        descricao: '',
+        });
+    const { user, logout} = useAuth()
     const navigate = useNavigate();
-
-    const handleSubmit = (e) => {
+    
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Enviar a proposta para o backend futuramente
-        console.log('Proposta enviada:', proposta);
+
+        proposta.id_usuario = user.id
+        proposta.titulo = "Titulo" 
+
+        const proposalData = await apiService.submitProposal(proposta)
+        console.log('proposta enviada:  ', proposalData)
     };
 
     return (
@@ -23,8 +34,8 @@ function SubmitProposalPage() {
             <form onSubmit={handleSubmit}>
                 <textarea
                     placeholder="Descreva sua proposta"
-                    value={proposta}
-                    onChange={(e) => setProposta(e.target.value)}
+                    value={proposta.descricao}
+                    onChange={(e) => setProposta({ ...proposta, descricao: e.target.value })}
                     required
                     rows="6"
                 />

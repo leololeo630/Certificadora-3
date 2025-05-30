@@ -159,7 +159,35 @@ app.post('/api/usuarios/login', (req, res) => {
         });
     });
 });
+app.post('/api/proposal/submit', (req, res) => {
+    //const { id_usuario, titulo, descricao } = req.body
+    const id_usuario = req.body.proposta.id_usuario
+    const titulo = req.body.proposta.titulo
+    const descricao = req.body.proposta.descricao
+    if (!id_usuario || !titulo || !descricao) {
+        return res.status(400).json({ error: 'Campos obrigatórios não preenchidos.' });
+    }
 
+    const sql = `
+    INSERT INTO Propostas (id_usuario, titulo, descricao) 
+    VALUES (?, ?, ?)
+    `;
+    db.run(sql, [id_usuario, titulo, descricao], function (err) {
+    if (err) {
+      console.error('Erro ao inserir proposta:', err.message);
+      return res.status(500).json({ error: 'Erro ao inserir proposta.' });
+    }
+
+    res.status(201).json({
+      id: this.lastID,
+      id_usuario,
+      titulo,
+      descricao,
+      data_envio: new Date().toISOString()
+    });
+  });
+
+})
 // Iniciar o servidor
 app.listen(PORT, () => {
     console.log(`Servidor backend rodando em http://localhost:${PORT}`);
