@@ -72,8 +72,7 @@ Discentes: Gustavo, Leonardo, Paulo, Gabriel e Mateus.
 Facilitar o envio e gerenciamento de ideias para o projeto Meninas Digitais, permitindo que usuários cadastrem propostas e os usuários participantes do projeto possam
 visualizar, gerenciar, e responder as propostas enviadas.
 
-## Funcionalidades  
-### Implementadas  
+## Funcionalidades implementadas  
 - Cadastro e login de usuários
 - Submissão de propostas (sem salvamento no banco)
 - Ver propostas enviadas 
