@@ -65,6 +65,22 @@
 9. **Acesse o sistema**
    - Acesse o sistema disponível em: http://localhost:5173
 
-10. **Teste**
-   - Usuário: teste@email.com
-   - Senha: 123456
+## Equipe  
+Discentes: Gustavo, Leonardo, Paulo, Gabriel e Mateus.  
+
+## Objetivo  
+Facilitar o envio e gerenciamento de ideias para o projeto Meninas Digitais, permitindo que usuários cadastrem propostas e os usuários participantes do projeto possam
+visualizar, gerenciar, e responder as propostas enviadas.
+
+## Funcionalidades  
+### Implementadas  
+- Cadastro e login de usuários
+- Submissão de propostas (sem salvamento no banco)
+- Ver propostas enviadas 
+- Deslogar
+
+## Roteiro para teste
+
+1. **Cadastre-se** com e-mail e senha.  
+2. **Faça login** e acesse o menu de opções.  
+3. **Tente enviar** uma proposta, entrando na opção: submter proposta.
