@@ -51,19 +51,19 @@
    npm install
 
 8. **Execute o sistema em dois terminais separados**
-Terminal 1 (Backend):
-   ```bash
-   cd src/db
-   node server.js
-
-Terminal 2 (Frontend):
-   ```bash
-   cd src
-   npm run dev
+   - Terminal 1 (Backend):
+    ```bash
+    cd src/db
+    node server.js
+    ```
+   - Terminal 2 (Frontend):
+    ```bash
+    cd src
+    npm run dev
    ```
 
 9. **Acesse o sistema**
-   - Acesse o sistema disponível em: http://localhost:5173
+   - Acesse o sistema, após disponível em: http://localhost:5173
 
 10. **Teste**
    - Usuário: teste@email.com
