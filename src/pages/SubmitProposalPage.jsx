@@ -1,37 +1,48 @@
 // src/pages/SubmitProposalPage.jsx
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
-import "./Global.css"; // Importando o CSS global
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
+import './Global.css'; // Importando o CSS global
+import { useAuth } from '../context/AuthContext';
+import { apiService } from '../services/api';
 
 function SubmitProposalPage() {
-  const [proposta, setProposta] = useState("");
-  const navigate = useNavigate();
+    const [proposta, setProposta] = useState({
+        id_usuario: null,
+        titulo: '',
+        descricao: '',
+        });
+    const { user, logout} = useAuth()
+    const navigate = useNavigate();
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Enviar a proposta para o backend futuramente
-    console.log("Proposta enviada:", proposta);
-  };
+        proposta.id_usuario = user.id
+        proposta.titulo = "Titulo" 
 
-  return (
-    <div className="submit-proposal-container">
-      <div className="back-button" onClick={() => navigate(-1)}>
-        <FaArrowLeft size={24} /> Voltar
-      </div>
-      <h1>Submeter Proposta</h1>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          placeholder="Descreva sua proposta"
-          value={proposta}
-          onChange={(e) => setProposta(e.target.value)}
-          required
-          rows="6"
-        />
-        <button type="submit">Submeter Proposta</button>
-      </form>
-    </div>
-  );
+        const proposalData = await apiService.submitProposal(proposta)
+        console.log('proposta enviada:  ', proposalData)
+    };
+
+    return (
+        <div className="submit-proposal-container">
+            <div className="back-button" onClick={() => navigate(-1)}>
+                <FaArrowLeft size={24} /> Voltar
+            </div>
+            <h1>Submeter Proposta</h1>
+            <form onSubmit={handleSubmit}>
+                <textarea
+                    placeholder="Descreva sua proposta"
+                    value={proposta.descricao}
+                    onChange={(e) => setProposta({ ...proposta, descricao: e.target.value })}
+                    required
+                    rows="6"
+                />
+                <button type="submit">Submeter Proposta</button>
+            </form>
+        </div>
+    );
 }
 
 export default SubmitProposalPage;
