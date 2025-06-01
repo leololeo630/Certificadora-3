@@ -25,8 +25,10 @@
 
 ##  Como Executar
 
-1. **Faça o download do repositório**
+1. **Faça o download do repositório e das ferramentas usadas**
    - Clique em "Code" → "Download ZIP"
+   - Clique no link [Node.js](https://nodejs.org/) e siga as instruções de instalação para o seu sistema operacional.
+   - Clique no link [SQLite](https://www.sqlite.org/) e siga as instruções de instalação para o seu sistema operacional.
 
 2. **Extraia o conteúdo**
    - Extraia o arquivo ZIP para uma pasta de sua preferência
