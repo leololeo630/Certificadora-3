@@ -76,8 +76,7 @@ visualizar, gerenciar, e responder as propostas enviadas.
 
 ## Funcionalidades implementadas  
 - Cadastro e login de usuários
-- Submissão de propostas (sem salvamento no banco)
-- Ver propostas enviadas 
+- Submissão de propostas
 - Deslogar
 
 ## Roteiro para teste
