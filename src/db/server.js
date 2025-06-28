@@ -188,6 +188,25 @@ app.post('/api/proposal/submit', (req, res) => {
   });
 
 })
+
+app.get('/api/proposal', (req, res) => {
+    const sql = `
+    SELECT p.id, p.titulo, p.descricao, p.data_envio, u.nome as autor
+    FROM Propostas p
+    LEFT JOIN Usuarios u ON p.id_usuario = u.id
+    ORDER BY p.data_envio DESC
+    `;
+    
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            console.error('Erro ao buscar propostas:', err.message);
+            return res.status(500).json({ error: 'Erro ao buscar propostas.' });
+        }
+        
+        res.status(200).json(rows);
+    });
+});
+
 // Iniciar o servidor
 app.listen(PORT, () => {
     console.log(`Servidor backend rodando em http://localhost:${PORT}`);
