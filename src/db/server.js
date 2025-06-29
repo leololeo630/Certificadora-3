@@ -206,6 +206,33 @@ app.get('/api/proposal', (req, res) => {
         res.status(200).json(rows);
     });
 });
+//buscar propostas com filtros
+app.get('/api/proposal/filter', (req, res) => {
+    const  f = req.query.q || "";
+    const filter = `%${f}%`;
+
+    const sql = `
+    SELECT p.id, p.titulo, p.descricao, p.data_envio, u.nome as autor
+    FROM Propostas p
+    LEFT JOIN Usuarios u ON p.id_usuario = u.id
+    WHERE 
+        p.titulo LIKE ? OR
+        p.descricao LIKE ? OR
+        u.nome LIKE ? 
+
+    ORDER BY p.data_envio DESC
+    `;
+    
+    const params = [filter, filter, filter];
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            console.error('Erro ao buscar propostas:', err.message);
+            return res.status(500).json({ error: 'Erro ao buscar propostas.' });
+        }
+        
+        res.status(200).json(rows);
+    });
+});
 
 // Iniciar o servidor
 app.listen(PORT, () => {

@@ -19,7 +19,6 @@ function SubmitProposalPage() {
         e.preventDefault();
 
         proposta.id_usuario = user.id
-        proposta.titulo = "Titulo" 
 
         const proposalData = await apiService.submitProposal(proposta)
         console.log('proposta enviada:  ', proposalData)
@@ -32,6 +31,13 @@ function SubmitProposalPage() {
             </div>
             <h1>Submeter Proposta</h1>
             <form onSubmit={handleSubmit}>
+                <textarea
+                    placeholder="Titulo Da Proposta"
+                    value={proposta.titulo}
+                    onChange={(e) => setProposta({ ...proposta, titulo: e.target.value })}
+                    required
+                    rows="1"
+                />
                 <textarea
                     placeholder="Descreva sua proposta"
                     value={proposta.descricao}

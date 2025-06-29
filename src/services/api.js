@@ -84,6 +84,28 @@ export const apiService = {
       console.error('Erro na API:', error);
       throw error;
     }
+  },
+  filtrarPropostas: async (filter) => {
+    try {
+      const query = encodeURIComponent(filter || "");
+      const response = await fetch(`${API_BASE_URL}/proposal/filter?q=${query}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao buscar propostas');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Erro na API:', error);
+      throw error;
+    }
   }
 
 };

@@ -9,7 +9,9 @@ function ProposalListPage() {
   const [propostas, setPropostas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
-
+  const [search, setSearch] = useState({
+    filter: ''
+  });
   useEffect(() => {
     const carregarPropostas = async () => {
       try {
@@ -27,12 +29,28 @@ function ProposalListPage() {
     carregarPropostas();
   }, []);
 
+  const handleSearch = async () => {
+    console.log(search.filter)
+    const data = await apiService.filtrarPropostas(search.filter);
+    setPropostas(data)
+  };
+
   return (
     <div className="proposal-list-container">
       <div className="back-button" onClick={() => navigate(-1)}>
         <FaArrowLeft size={24} /> Voltar
       </div>
       
+      <div className="search-bar">
+        <textarea
+          placeholder="Pesquise por Propostas..."
+          value={search.filter}
+          onChange={(e) => setSearch({filter: e.target.value })}
+          required
+          rows="1"
+          />
+          <button type="submit" onClick={handleSearch}>Pesquisar</button>
+      </div>
       <h1>Lista de Propostas</h1>
       
       {erro && <div className="error-message">{erro}</div>}
