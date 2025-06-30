@@ -67,7 +67,7 @@
 9. **Acesse o sistema**
    - Acesse o sistema disponível em: http://localhost:5173
 
-## Equipe  
+## Grupo 7  
 Discentes: Gustavo, Leonardo, Paulo, Gabriel e Mateus.  
 
 ## Objetivo  
