@@ -110,15 +110,38 @@ export const apiService = {
     }
   },
 
+  buscarFeedbacks: async (idProposta) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/feedbacks/${idProposta}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao buscar feedbacks');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Erro na API:', error);
+      throw error;
+    }
+  },
+
   enviarFeedback: async (idProposta, idAdmin, texto_feedback) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/feedback/${idProposta}`, {
+      const response = await fetch(`${API_BASE_URL}/feedbacks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id_administrador: idAdmin,
+          idProposta,
+          idAdmin,
           texto_feedback,
         }),
       });

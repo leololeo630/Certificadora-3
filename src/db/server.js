@@ -64,6 +64,46 @@ function criarTabelas() {
         db.run(sqlTableUsuario);
         db.run(sqlTableProposta);
         db.run(sqlTableFeedback);
+        
+        criarUsuariosPadrao();
+    });
+}
+
+function criarUsuariosPadrao() {
+    const defaultUsers = [
+        {
+            nome: 'Admin',
+            email: 'admin@email.com',
+            senha: 'admin123',
+            tipo_usuario: 'administrador'
+        },
+        {
+            nome: 'Usuario',
+            email: 'usuario@email.com',
+            senha: 'usuario123',
+            tipo_usuario: 'usuario'
+        }
+    ];
+
+    defaultUsers.forEach(user => {
+        const checkSql = 'SELECT COUNT(*) as count FROM Usuarios WHERE email = ?';
+        db.get(checkSql, [user.email], (err, row) => {
+            if (err) {
+                console.error('Erro ao verificar usuário:', err.message);
+                return;
+            }
+            
+            if (row.count === 0) {
+                const insertSql = 'INSERT INTO Usuarios (nome, email, senha, tipo_usuario) VALUES (?, ?, ?, ?)';
+                db.run(insertSql, [user.nome, user.email, user.senha, user.tipo_usuario], function(err) {
+                    if (err) {
+                        console.error('Erro ao criar usuário padrão:', err.message);
+                    } else {
+                        console.log(`Usuário padrão criado: ${user.email}`);
+                    }
+                });
+            }
+        });
     });
 }
 
@@ -239,7 +279,6 @@ app.listen(PORT, () => {
     console.log(`Servidor backend rodando em http://localhost:${PORT}`);
 });
 
-// Graceful shutdown
 process.on('SIGINT', () => {
     db.close((err) => {
         if (err) {
@@ -251,51 +290,54 @@ process.on('SIGINT', () => {
 });
 
 // Adicionar feedback a uma proposta
-app.post('/api/feedback/:id_proposta', (req, res) => {
-    const id_proposta = req.params.id_proposta;
-    const { id_administrador, texto_feedback } = req.body;
-
-    if (!id_administrador || !texto_feedback) {
-        return res.status(400).json({ error: 'Administrador e texto do feedback são obrigatórios.' });
+app.post('/api/feedbacks', (req, res) => {
+    const { idProposta, idAdmin, texto_feedback } = req.body;
+    
+    if (!idProposta || !idAdmin || !texto_feedback) {
+        return res.status(400).json({ error: 'Campos obrigatórios não preenchidos.' });
     }
 
-    const sqlCheck = `SELECT id FROM Feedbacks WHERE id_proposta = ?`;
-    db.get(sqlCheck, [id_proposta], (err, row) => {
+    const sql = `
+    INSERT INTO Feedbacks (id_proposta, id_administrador, texto_feedback) 
+    VALUES (?, ?, ?)
+    `;
+    
+    db.run(sql, [idProposta, idAdmin, texto_feedback], function (err) {
         if (err) {
-            console.error('Erro ao verificar feedback existente:', err.message);
-            return res.status(500).json({ error: 'Erro interno.' });
+            console.error('Erro ao inserir feedback:', err.message);
+            return res.status(500).json({ error: 'Erro ao inserir feedback.' });
         }
 
-        if (row) {
-            // Atualizar se já existir
-            const sqlUpdate = `
-              UPDATE Feedbacks SET texto_feedback = ?, id_administrador = ?, data_feedback = CURRENT_TIMESTAMP
-              WHERE id_proposta = ?
-            `;
-            db.run(sqlUpdate, [texto_feedback, id_administrador, id_proposta], function (err) {
-                if (err) {
-                    console.error('Erro ao atualizar feedback:', err.message);
-                    return res.status(500).json({ error: 'Erro ao atualizar feedback.' });
-                }
-                res.status(200).json({ message: 'Feedback atualizado com sucesso!' });
-            });
-        } else {
-            // Inserir novo
-            const sqlInsert = `
-              INSERT INTO Feedbacks (id_proposta, id_administrador, texto_feedback)
-              VALUES (?, ?, ?)
-            `;
-            db.run(sqlInsert, [id_proposta, id_administrador, texto_feedback], function (err) {
-                if (err) {
-                    console.error('Erro ao inserir feedback:', err.message);
-                    return res.status(500).json({ error: 'Erro ao inserir feedback.' });
-                }
-                res.status(201).json({ message: 'Feedback adicionado com sucesso!' });
-            });
-        }
+        res.status(201).json({
+            id: this.lastID,
+            id_proposta: idProposta,
+            id_administrador: idAdmin,
+            texto_feedback,
+            data_feedback: new Date().toISOString()
+        });
     });
 });
 
+app.get('/api/feedbacks/:idProposta', (req, res) => {
+    const idProposta = req.params.idProposta;
+    
+    const sql = `
+    SELECT f.id, f.texto_feedback, f.data_feedback, u.nome as administrador
+    FROM Feedbacks f
+    LEFT JOIN Usuarios u ON f.id_administrador = u.id
+    WHERE f.id_proposta = ?
+    ORDER BY f.data_feedback DESC
+    `;
+    
+    db.all(sql, [idProposta], (err, rows) => {
+        if (err) {
+            console.error('Erro ao buscar feedbacks:', err.message);
+            return res.status(500).json({ error: 'Erro ao buscar feedbacks.' });
+        }
+        
+        res.status(200).json(rows);
+    });
+});
 
 // Excluir proposta
 app.delete('/api/proposal/:id', (req, res) => {
@@ -315,58 +357,3 @@ app.delete('/api/proposal/:id', (req, res) => {
         res.status(200).json({ message: 'Proposta excluída com sucesso!' });
     });
 });
-
-
-
-//EXEMPLO DOS METODOS
-/*
-app.post('/api/usuarios/cadastrar', (req, res) => {
-    const { nome, email, senha, tipo } = req.body;
-
-    if (!nome || !email || !senha || !tipo) {
-        return res.status(400).json({
-            error: 'Todos os campos são obrigatórios (nome, email, senha, tipo).',
-        });
-    }
-
-    const sql =
-        'INSERT INTO Usuarios (nome, email, senha, tipo) VALUES (?, ?, ?, ?)';
-    db.run(sql, [nome, email, senha, tipo], function (err) {
-        if (err) {
-            console.error('Erro ao cadastrar usuário:', err.message);
-            if (
-                err.message.includes('UNIQUE constraint failed: Usuarios.email')
-            ) {
-                return res
-                    .status(409)
-                    .json({ error: 'Este email já está cadastrado.' });
-            }
-            return res
-                .status(500)
-                .json({ error: 'Erro ao cadastrar usuário. ' + err.message });
-        }
-        res.status(201).json({ id: this.lastID, nome, email, tipo });
-    });
-});
-
-app.get('/api/propostas', (req, res) => {
-    const sql = `
-      SELECT p.id, p.titulo, p.descricao, p.area_interesse, p.data_envio, p.status, u.nome as autor_nome, u.email as autor_email
-      FROM Propostas p
-      LEFT JOIN Usuarios u ON p.id_usuario = u.id
-      ORDER BY p.data_envio DESC
-  `;
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            console.error('Erro ao buscar propostas:', err.message);
-            return res
-                .status(500)
-                .json({ error: 'Erro ao buscar propostas. ' + err.message });
-        }
-        res.status(200).json(rows);
-    });
-});
- */
-
-
-
