@@ -77,6 +77,9 @@ visualizar, gerenciar, e responder as propostas enviadas.
 ## Funcionalidades implementadas  
 - Cadastro e login de usuários
 - Submissão de propostas
+- Exclusão de propostas
+- Visualização e busca de propostas
+- Criação de Feedback para propostas 
 - Deslogar
 
 ## Roteiro para teste
@@ -84,3 +87,6 @@ visualizar, gerenciar, e responder as propostas enviadas.
 1. **Cadastre-se** com e-mail e senha.  
 2. **Faça login** e acesse o menu de opções.  
 3. **Tente enviar** uma proposta, entrando na opção: submter proposta.
+4. **Tente visualizar** a proposta, entrando na opção: ver propostas.
+
+## Contas Padrão
