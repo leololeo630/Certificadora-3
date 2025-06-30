@@ -88,5 +88,13 @@ visualizar, gerenciar, e responder as propostas enviadas.
 2. **Faça login** e acesse o menu de opções.  
 3. **Tente enviar** uma proposta, entrando na opção: submter proposta.
 4. **Tente visualizar** a proposta, entrando na opção: ver propostas.
+5. **Tente fazer um feedback** na proposta, entrando na opção: ver propostas. É necessário logar como administrador com a conta padrão para fazer feedback.
 
 ## Contas Padrão
+As contas padrão para testes são:
+- Administrador:
+  - email: admin@email.com
+  - senha: admin123
+- Usuário:
+  - email: usuario@email.com
+  - senha: usuario123 
