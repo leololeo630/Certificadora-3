@@ -1,4 +1,3 @@
-// src/services/api.js
 const API_BASE_URL = 'http://localhost:3001/api';
 
 export const apiService = {
@@ -48,8 +47,9 @@ export const apiService = {
       throw error;
     }
   },
-  submitProposal: async(proposta) => {
-    try{
+
+  submitProposal: async (proposta) => {
+    try {
       const response = await fetch(`${API_BASE_URL}/proposal/submit`, {
         method: 'POST',
         headers: {
@@ -59,11 +59,12 @@ export const apiService = {
       });
       const data = await response.json();
       return data;
-    }catch (error) {
-      console.log(error)
-      throw error
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
   },
+
   buscarPropostas: async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/proposal`, {
@@ -85,6 +86,7 @@ export const apiService = {
       throw error;
     }
   },
+
   filtrarPropostas: async (filter) => {
     try {
       const query = encodeURIComponent(filter || "");
@@ -106,6 +108,53 @@ export const apiService = {
       console.error('Erro na API:', error);
       throw error;
     }
-  }
+  },
 
+  enviarFeedback: async (idProposta, idAdmin, texto_feedback) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/feedback/${idProposta}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id_administrador: idAdmin,
+          texto_feedback,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao enviar feedback');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Erro ao enviar feedback:', error);
+      throw error;
+    }
+  },
+
+  excluirProposta: async (idProposta) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/proposal/${idProposta}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao excluir proposta');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Erro ao excluir proposta:', error);
+      throw error;
+    }
+  }
 };
