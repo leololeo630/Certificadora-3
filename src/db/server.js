@@ -250,6 +250,74 @@ process.on('SIGINT', () => {
     });
 });
 
+// Adicionar feedback a uma proposta
+app.post('/api/feedback/:id_proposta', (req, res) => {
+    const id_proposta = req.params.id_proposta;
+    const { id_administrador, texto_feedback } = req.body;
+
+    if (!id_administrador || !texto_feedback) {
+        return res.status(400).json({ error: 'Administrador e texto do feedback são obrigatórios.' });
+    }
+
+    const sqlCheck = `SELECT id FROM Feedbacks WHERE id_proposta = ?`;
+    db.get(sqlCheck, [id_proposta], (err, row) => {
+        if (err) {
+            console.error('Erro ao verificar feedback existente:', err.message);
+            return res.status(500).json({ error: 'Erro interno.' });
+        }
+
+        if (row) {
+            // Atualizar se já existir
+            const sqlUpdate = `
+              UPDATE Feedbacks SET texto_feedback = ?, id_administrador = ?, data_feedback = CURRENT_TIMESTAMP
+              WHERE id_proposta = ?
+            `;
+            db.run(sqlUpdate, [texto_feedback, id_administrador, id_proposta], function (err) {
+                if (err) {
+                    console.error('Erro ao atualizar feedback:', err.message);
+                    return res.status(500).json({ error: 'Erro ao atualizar feedback.' });
+                }
+                res.status(200).json({ message: 'Feedback atualizado com sucesso!' });
+            });
+        } else {
+            // Inserir novo
+            const sqlInsert = `
+              INSERT INTO Feedbacks (id_proposta, id_administrador, texto_feedback)
+              VALUES (?, ?, ?)
+            `;
+            db.run(sqlInsert, [id_proposta, id_administrador, texto_feedback], function (err) {
+                if (err) {
+                    console.error('Erro ao inserir feedback:', err.message);
+                    return res.status(500).json({ error: 'Erro ao inserir feedback.' });
+                }
+                res.status(201).json({ message: 'Feedback adicionado com sucesso!' });
+            });
+        }
+    });
+});
+
+
+// Excluir proposta
+app.delete('/api/proposal/:id', (req, res) => {
+    const id = req.params.id;
+
+    const sql = `DELETE FROM Propostas WHERE id = ?`;
+    db.run(sql, [id], function (err) {
+        if (err) {
+            console.error('Erro ao excluir proposta:', err.message);
+            return res.status(500).json({ error: 'Erro ao excluir proposta.' });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Proposta não encontrada.' });
+        }
+
+        res.status(200).json({ message: 'Proposta excluída com sucesso!' });
+    });
+});
+
+
+
 //EXEMPLO DOS METODOS
 /*
 app.post('/api/usuarios/cadastrar', (req, res) => {
@@ -299,3 +367,6 @@ app.get('/api/propostas', (req, res) => {
     });
 });
  */
+
+
+
